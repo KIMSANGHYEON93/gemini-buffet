@@ -11,18 +11,19 @@ function cn(...inputs: ClassValue[]) {
 }
 
 interface AnalysisData {
-  symbol: string;
+  opinion: string;
   currentPrice: string;
   marketStatus: string;
-  buffettOpinion: string;
   keyFinancials: {
-    revenue: string;
-    operatingIncome: string;
+    peRatio: string;
+    marketCap: string;
+    dividendYield: string;
+    roe: string;
+    freeCashFlow: string;
   };
-  news: Array<{
+  recentNews: Array<{
     title: string;
-    source: string;
-    link: string;
+    url: string;
   }>;
 }
 
@@ -73,8 +74,8 @@ export default function Home() {
       <div className="max-w-4xl w-full flex flex-col items-center gap-8 mb-16 mt-8">
         <div className="relative w-40 h-40 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-accent/20 shadow-[0_0_40px_rgba(34,197,94,0.2)] animate-in zoom-in duration-700">
           <Image
-            src="/geminibuffett.png"
-            alt="Gemini Buffett"
+            src="/dogebuffett.png"
+            alt="Doge Buffett"
             fill
             className="object-cover hover:scale-105 transition-transform duration-500"
             priority
@@ -141,7 +142,7 @@ export default function Home() {
               <span className="bg-accent/10 p-2 rounded-lg">Oracle&apos;s Insight</span>
             </h2>
             <p className="text-xl md:text-2xl leading-relaxed text-gray-200 font-serif italic">
-              &quot;{data.buffettOpinion}&quot;
+              &quot;{data.opinion}&quot;
             </p>
           </div>
 
@@ -168,14 +169,26 @@ export default function Home() {
             <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
               <DollarSign className="w-5 h-5 text-accent" /> Key Financials
             </h3>
-            <div className="grid grid-cols-2 gap-8">
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <p className="text-gray-500 text-sm uppercase tracking-wider">Revenue</p>
-                <p className="text-2xl font-semibold">{data.keyFinancials.revenue}</p>
+                <p className="text-gray-500 text-sm uppercase tracking-wider">P/E Ratio</p>
+                <p className="text-2xl font-semibold">{data.keyFinancials.peRatio}</p>
               </div>
               <div className="space-y-2">
-                <p className="text-gray-500 text-sm uppercase tracking-wider">Operating Income</p>
-                <p className="text-2xl font-semibold">{data.keyFinancials.operatingIncome}</p>
+                <p className="text-gray-500 text-sm uppercase tracking-wider">Market Cap</p>
+                <p className="text-2xl font-semibold">{data.keyFinancials.marketCap}</p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-gray-500 text-sm uppercase tracking-wider">Dividend Yield</p>
+                <p className="text-2xl font-semibold">{data.keyFinancials.dividendYield}</p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-gray-500 text-sm uppercase tracking-wider">ROE</p>
+                <p className="text-2xl font-semibold">{data.keyFinancials.roe}</p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-gray-500 text-sm uppercase tracking-wider">Free Cash Flow</p>
+                <p className="text-2xl font-semibold">{data.keyFinancials.freeCashFlow}</p>
               </div>
             </div>
           </div>
@@ -186,18 +199,17 @@ export default function Home() {
               <Newspaper className="w-5 h-5 text-accent" /> Latest News
             </h3>
             <div className="space-y-4">
-              {data.news.map((item, idx) => (
+              {data.recentNews.map((item, idx) => (
                 <a
                   key={idx}
-                  href={item.link}
+                  href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group"
                 >
-                  <h4 className="font-medium text-gray-200 group-hover:text-accent transition-colors line-clamp-1">
+                  <h4 className="font-medium text-gray-200 group-hover:text-accent transition-colors line-clamp-2">
                     {item.title}
                   </h4>
-                  <p className="text-sm text-gray-500 mt-1">{item.source}</p>
                 </a>
               ))}
             </div>
