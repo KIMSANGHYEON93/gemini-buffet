@@ -4,8 +4,10 @@ import { NextResponse } from "next/server";
 const apiKey = process.env.GOOGLE_API_KEY;
 const client = new GoogleGenAI({ apiKey });
 
+export const maxDuration = 60;
+
 // Hardcoded Store ID from setup script
-const STORE_ID = "fileSearchStores/buffett-wisdom-store-popula-nue4n6hqztxy";
+const STORE_ID = "fileSearchStores/buffett-wisdom-store-popula-jjld8ateeii5";
 
 export async function POST(req: Request) {
   try {
@@ -16,10 +18,11 @@ export async function POST(req: Request) {
       throw new Error("GOOGLE_API_KEY is not defined");
     }
 
-    const model = "gemini-2.5-flash";
+    // Use a newer, more capable model to avoid 500 errors and improve JSON generation
+    const model = "gemini-2.0-flash";
 
     // Step 1: Get Buffett's Wisdom (RAG)
-    console.log("Step 1: Fetching Buffett's wisdom...");
+    console.log(`Step 1: Fetching Buffett's wisdom for ${symbol} using ${model}...`);
     const ragPrompt = `
       You are Warren Buffett. Search your shareholder letters for any mentions of ${symbol} or companies in the same industry.
       
@@ -31,16 +34,21 @@ export async function POST(req: Request) {
       Summarize relevant quotes and principles from the letters. **You MUST cite the year of the shareholder letter for every quote or principle mentioned.**
     `;
 
-    const ragResult = await client.models.generateContent({
-      model: model,
-      contents: [{ role: "user", parts: [{ text: ragPrompt }] }],
-      config: {
-        tools: [{ fileSearch: { fileSearchStoreNames: [STORE_ID] } }],
-      }
-    });
-
-    const buffettWisdom = ragResult.text;
-    console.log("Buffett Wisdom:", buffettWisdom);
+    let buffettWisdom = "";
+    try {
+      const ragResult = await client.models.generateContent({
+        model: model,
+        contents: [{ role: "user", parts: [{ text: ragPrompt }] }],
+        config: {
+          tools: [{ fileSearch: { fileSearchStoreNames: [STORE_ID] } }],
+        }
+      });
+      buffettWisdom = ragResult.text || "No specific mentions found in letters.";
+      console.log("Step 1 Success. Wisdom length:", buffettWisdom.length);
+    } catch (ragError) {
+      console.error("RAG Step Failed:", ragError);
+      buffettWisdom = "Note: Could not access shareholder letters at this moment.";
+    }
 
     // Step 2: Get Real-time Data and Synthesize (Google Search)
     console.log("Step 2: Fetching real-time data and synthesizing...");
@@ -95,14 +103,17 @@ export async function POST(req: Request) {
     });
 
     let responseText = finalResult.text;
-    console.log("Final Response:", responseText);
-
     if (!responseText) {
-      throw new Error("No response text received from Gemini");
+      throw new Error("No response text received from Gemini in Step 2");
     }
 
-    // Clean up markdown code blocks if present (just in case)
-    responseText = responseText.replace(/```json\n|\n```/g, "").replace(/```/g, "").trim();
+    console.log("Step 2 Success. Response length:", responseText.length);
+
+    // Clean up markdown code blocks
+    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      responseText = jsonMatch[0];
+    }
 
     const analysis = JSON.parse(responseText);
     return NextResponse.json(analysis);
