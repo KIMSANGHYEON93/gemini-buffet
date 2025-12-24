@@ -6,8 +6,8 @@ const client = new GoogleGenAI({ apiKey });
 
 export const maxDuration = 60;
 
-// Hardcoded Store ID from setup script
-const STORE_ID = "fileSearchStores/buffett-wisdom-store-popula-jjld8ateeii5";
+// Use Store ID from environment variables for flexibility
+const STORE_ID = process.env.GOOGLE_RAG_STORE_ID;
 
 export async function POST(req: Request) {
   try {
@@ -62,33 +62,51 @@ export async function POST(req: Request) {
       
       **IMPORTANT**: Search for these specific financial metrics:
       - **P/E Ratio** (Price-to-Earnings Ratio)
-      - **Market Cap** (Market Capitalization in USD or appropriate currency)
-      - **Dividend Yield** (as a percentage)
-      - **ROE** (Return on Equity as a percentage)
-      - **Free Cash Flow** (in USD or appropriate currency)
+      - **Market Cap** (Market Capitalization)
+      - **Dividend Yield**
+      - **ROE** (Return on Equity)
+      - **Free Cash Flow** (FCF)
       
       Combine your wisdom with this real-time data to provide a deep financial analysis **IN KOREAN**.
-      Your tone should be wise, patient, and focused on long-term value.
       
       **CRITICAL INSTRUCTIONS**:
       1. Write the "opinion" field entirely in Korean (한국어).
-      2. You must cite the shareholder letters (e.g., "1987년 주주서한에서...") when referencing the wisdom provided above.
-      3. For keyFinancials, provide actual numerical values or "N/A" if not found. Use proper formatting (e.g., "$3.2T" for market cap, "15.2%" for percentages).
+      2. Provide a structured "investmentSummary" array. For each metric (Market Cap, PER, ROE, FCF, Dividend Yield), provide:
+         - "metric": Name of the metric
+         - "value": The numerical value (e.g., "$3.2T", "35.2")
+         - "evaluation": A short qualitative assessment (e.g., "Top Tier", "High", "Excellent", "Low")
+         - "keyword": A punchy 1-3 word description (e.g., "Market Leader", "Overvalued", "Cash Machine")
+      3. For "radarChartData", provide 5 scores (0-100) for these categories:
+         - "Moat" (Economic Moat)
+         - "Management" (Management Quality)
+         - "Financials" (Financial Health)
+         - "Value" (Valuation)
+         - "Growth" (Growth Potential)
+         Return as objects with "subject", "A" (the score), and "fullMark" (100).
+      4. Provide a "conclusion" paragraph giving a final verdict in Korean.
       
       Return the response in the following JSON format:
       {
-        "opinion": "한국어로 작성된 심층 분석 (주주서한 인용 포함)...",
-        "currentPrice": "Real-time price with currency symbol",
-        "marketStatus": "Open/Closed",
-        "keyFinancials": {
-          "peRatio": "Exact P/E ratio or 'N/A'",
-          "marketCap": "Market cap with currency (e.g., '$3.2T') or 'N/A'",
-          "dividendYield": "Dividend yield percentage (e.g., '0.5%') or 'N/A'",
-          "roe": "ROE percentage (e.g., '147%') or 'N/A'",
-          "freeCashFlow": "Free cash flow with currency (e.g., '$96B') or 'N/A'"
-        },
+        "opinion": "...",
+        "currentPrice": "...",
+        "marketStatus": "...",
+        "investmentSummary": [
+          { "metric": "Market Cap", "value": "...", "evaluation": "...", "keyword": "..." },
+          { "metric": "PER", "value": "...", "evaluation": "...", "keyword": "..." },
+          { "metric": "ROE", "value": "...", "evaluation": "...", "keyword": "..." },
+          { "metric": "FCF", "value": "...", "evaluation": "...", "keyword": "..." },
+          { "metric": "Dividend Yield", "value": "...", "evaluation": "...", "keyword": "..." }
+        ],
+        "radarChartData": [
+          { "subject": "Moat", "A": 90, "fullMark": 100 },
+          { "subject": "Management", "A": 85, "fullMark": 100 },
+          { "subject": "Financials", "A": 95, "fullMark": 100 },
+          { "subject": "Value", "A": 70, "fullMark": 100 },
+          { "subject": "Growth", "A": 80, "fullMark": 100 }
+        ],
+        "conclusion": "...",
         "recentNews": [
-          { "title": "News title", "url": "News URL" }
+           { "title": "...", "url": "..." }
         ]
       }
     `;
