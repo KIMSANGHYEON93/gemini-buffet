@@ -1,10 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import dynamic from 'next/dynamic';
 import { Search, TrendingUp, DollarSign, Newspaper, AlertCircle, ArrowRight } from "lucide-react";
+import { GlassCard } from "@/app/components/ui/GlassCard";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+
+// Dynamically import Scene to avoid SSR issues with WebGL
+const Scene = dynamic(() => import('@/app/components/3d/Scene'), { ssr: false });
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -14,12 +18,23 @@ interface AnalysisData {
   opinion: string;
   currentPrice: string;
   marketStatus: string;
-  keyFinancials: {
-    peRatio: string;
-    marketCap: string;
-    dividendYield: string;
-    roe: string;
-    freeCashFlow: string;
+  investmentSummary: Array<{
+    metric: string;
+    value: string;
+    evaluation: string;
+    keyword: string;
+  }>;
+  priceReturns?: {
+    "1d": string;
+    "5d": string;
+    "1m": string;
+    "3m": string;
+    "6m": string;
+    "1y": string;
+  };
+  fiftyTwoWeekRange?: {
+    low: string;
+    high: string;
   };
   recentNews: Array<{
     title: string;
@@ -68,155 +83,219 @@ export default function Home() {
     }
   };
 
-  return (
-    <main className="min-h-screen bg-background text-foreground p-6 md:p-12 flex flex-col items-center font-sans selection:bg-accent selection:text-black">
-      {/* Hero Section */}
-      <div className="max-w-4xl w-full flex flex-col items-center gap-8 mb-16 mt-8">
-        <div className="relative w-40 h-40 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-accent/20 shadow-[0_0_40px_rgba(34,197,94,0.2)] animate-in zoom-in duration-700">
-          <Image
-            src="/dogebuffett.png"
-            alt="Doge Buffett"
-            fill
-            className="object-cover hover:scale-105 transition-transform duration-500"
-            priority
-          />
-        </div>
+  const calculateRangePosition = (low: string, high: string, current: string) => {
+    const parse = (s: string) => parseFloat(s.replace(/[^0-9.-]/g, ''));
+    const l = parse(low);
+    const h = parse(high);
+    const c = parse(current);
+    if (isNaN(l) || isNaN(h) || isNaN(c) || h === l) return 50;
+    return Math.min(100, Math.max(0, ((c - l) / (h - l)) * 100));
+  };
 
-        <div className="text-center space-y-4 animate-in slide-in-from-bottom-4 fade-in duration-700 delay-150">
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tighter">
-            Gemini <span className="text-accent">Buffett</span>
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-400 max-w-2xl mx-auto font-light">
-            &quot;Price is what you pay. Value is what you get.&quot;
-          </p>
-        </div>
+  return (
+    <main className="relative min-h-screen bg-black text-foreground font-sans overflow-x-hidden">
+      {/* 3D Background Scene */}
+      <div className="fixed inset-0 z-0">
+        <Scene />
       </div>
 
-      {/* Search Section */}
-      <div className="w-full max-w-xl mb-20 relative z-10 animate-in slide-in-from-bottom-4 fade-in duration-700 delay-300">
-        <div className="relative group">
-          <div className="absolute -inset-1 bg-gradient-to-r from-accent/20 to-green-600/20 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-500"></div>
-          <div className="relative flex items-center bg-card rounded-full border border-white/10 shadow-2xl">
-            <Search className="absolute left-6 text-gray-500 w-6 h-6" />
-            <input
-              type="text"
-              value={symbol}
-              onChange={(e) => setSymbol(e.target.value)}
-              placeholder="Enter stock symbol (e.g., AAPL, 005930)"
-              className="w-full bg-transparent border-none py-5 pl-16 pr-36 text-xl placeholder:text-gray-600 focus:ring-0 text-white rounded-full"
-              onKeyDown={(e) => e.key === 'Enter' && handleAnalyze()}
-            />
-            <button
-              onClick={handleAnalyze}
-              disabled={loading}
-              className="absolute right-2 top-2 bottom-2 bg-accent hover:bg-green-400 text-black font-bold px-8 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            >
-              {loading ? (
-                <span className="animate-pulse">Thinking...</span>
-              ) : (
-                <>
-                  Analyze <ArrowRight className="w-4 h-4" />
-                </>
-              )}
-            </button>
+      {/* Content Overlay */}
+      <div className="relative z-10 flex flex-col items-center p-6 md:p-12 w-full">
+
+        {/* Hero Section */}
+        <div className="max-w-4xl w-full flex flex-col items-center gap-4 mb-16 mt-32 pointer-events-none">
+          {/* Note: The 3D coin is in the background at center */}
+          <div className="text-center space-y-4 animate-in slide-in-from-bottom-4 fade-in duration-700 delay-150 backdrop-blur-md bg-black/40 p-8 rounded-3xl border border-white/10 shadow-2xl">
+            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter text-white drop-shadow-[0_2px_10px_rgba(255,255,255,0.3)]">
+              Gemini <span className="text-accent drop-shadow-[0_2px_15px_rgba(34,197,94,0.6)]">Buffett</span>
+            </h1>
+            <p className="text-xl md:text-2xl text-gray-100 max-w-2xl mx-auto font-medium drop-shadow-md">
+              &quot;Price is what you pay. Value is what you get.&quot;
+            </p>
           </div>
         </div>
-        {error && (
-          <div className="mt-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3 text-red-400 animate-in fade-in slide-in-from-top-2">
-            <AlertCircle className="w-5 h-5" />
-            <p>{error}</p>
+
+        {/* Search Section */}
+        <div className="w-full max-w-xl mb-20 z-20">
+          <GlassCard className="rounded-full p-2 bg-white/10 border-white/20 backdrop-blur-xl shadow-[0_0_30px_rgba(34,197,94,0.1)]" delay={0.2}>
+            <div className="relative flex items-center">
+              <Search className="absolute left-6 text-gray-300 w-6 h-6" />
+              <input
+                type="text"
+                value={symbol}
+                onChange={(e) => setSymbol(e.target.value)}
+                placeholder="Enter stock symbol (e.g., AAPL, NVDA)"
+                className="w-full bg-transparent border-none py-4 pl-16 pr-40 text-xl placeholder:text-gray-400 focus:ring-0 text-white rounded-full font-medium"
+                onKeyDown={(e) => e.key === 'Enter' && handleAnalyze()}
+              />
+              <button
+                onClick={handleAnalyze}
+                disabled={loading}
+                className="absolute right-2 top-2 bottom-2 bg-accent hover:bg-green-400 text-black font-extrabold text-lg px-8 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-[0_0_20px_rgba(34,197,94,0.4)] hover:shadow-[0_0_30px_rgba(34,197,94,0.6)] hover:scale-105 active:scale-95"
+              >
+                {loading ? (
+                  <span className="animate-pulse">Thinking...</span>
+                ) : (
+                  <>
+                    Analyze <ArrowRight className="w-5 h-5 stroke-[3px]" />
+                  </>
+                )}
+              </button>
+            </div>
+          </GlassCard>
+
+          {error && (
+            <GlassCard className="mt-6 p-4 bg-red-500/20 border-red-500/30 flex items-center gap-3 text-red-300" delay={0}>
+              <AlertCircle className="w-5 h-5" />
+              <p>{error}</p>
+            </GlassCard>
+          )}
+        </div>
+
+        {/* Results Grid */}
+        {data && (
+          <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-12 gap-6">
+
+            {/* Buffett's Opinion */}
+            <div className="md:col-span-8">
+              <GlassCard className="h-full p-8" delay={0.1}>
+                <div className="absolute top-0 right-0 p-8 opacity-10">
+                  <TrendingUp className="w-32 h-32 text-accent" />
+                </div>
+                <h2 className="text-2xl font-bold mb-6 flex items-center gap-3 text-accent">
+                  <span className="bg-accent/10 p-2 rounded-lg backdrop-blur-md">Oracle&apos;s Insight</span>
+                </h2>
+                <p className="text-xl md:text-2xl leading-relaxed text-gray-100 font-serif italic drop-shadow-md">
+                  &quot;{data.opinion}&quot;
+                </p>
+              </GlassCard>
+            </div>
+
+            {/* Price Card */}
+            <div className="md:col-span-4">
+              <GlassCard className="h-full p-8 flex flex-col justify-between" delay={0.2}>
+                <div>
+                  <h3 className="text-gray-400 font-medium mb-2">Current Price</h3>
+                  <div className="text-4xl font-bold text-white tracking-tight drop-shadow-lg">{data.currentPrice}</div>
+                </div>
+                <div className="mt-8">
+                  <div className={cn(
+                    "inline-flex items-center px-4 py-2 rounded-full text-sm font-medium backdrop-blur-sm shadow-inner",
+                    data.marketStatus.toLowerCase().includes("closed")
+                      ? "bg-red-500/20 text-red-300 border border-red-500/30"
+                      : "bg-green-500/20 text-green-300 border border-green-500/30"
+                  )}>
+                    {data.marketStatus}
+                  </div>
+                </div>
+              </GlassCard>
+            </div>
+
+            {/* Financials */}
+            <div className="md:col-span-6">
+              <GlassCard className="h-full p-8" delay={0.3}>
+                <h3 className="text-xl font-bold mb-6 flex items-center gap-2 text-white">
+                  <DollarSign className="w-5 h-5 text-accent" /> Key Financials
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  {data.investmentSummary?.map((item, idx) => (
+                    <div key={idx} className="space-y-2 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors shadow-inner">
+                      <p className="text-gray-400 text-xs uppercase tracking-widest">{item.metric}</p>
+                      <div className="flex flex-col">
+                        <p className="text-2xl font-bold text-white">{item.value}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-accent text-[10px] font-bold uppercase tracking-tighter px-2 py-0.5 rounded-md bg-accent/10 border border-accent/20">
+                            {item.evaluation}
+                          </span>
+                          <span className="text-gray-400 text-[10px] italic">
+                            {item.keyword}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </GlassCard>
+            </div>
+
+            {/* News */}
+            <div className="md:col-span-6">
+              <GlassCard className="h-full p-8" delay={0.4}>
+                <h3 className="text-xl font-bold mb-6 flex items-center gap-2 text-white">
+                  <Newspaper className="w-5 h-5 text-accent" /> Latest News
+                </h3>
+                <div className="space-y-4">
+                  {data.recentNews?.map((item, idx) => (
+                    <a
+                      key={idx}
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group shadow-sm hover:shadow-md border border-transparent hover:border-accent/20"
+                    >
+                      <h4 className="font-medium text-gray-200 group-hover:text-accent transition-colors line-clamp-2">
+                        {item.title}
+                      </h4>
+                    </a>
+                  ))}
+                </div>
+              </GlassCard>
+            </div>
+
+            {/* Price Performance */}
+            {data.priceReturns && (
+              <div className="md:col-span-6">
+                <GlassCard className="h-full p-8" delay={0.5}>
+                  <h3 className="text-xl font-bold mb-6 flex items-center gap-2 text-white">
+                    <TrendingUp className="w-5 h-5 text-accent" /> Price Returns
+                  </h3>
+                  <div className="grid grid-cols-3 gap-4">
+                    {Object.entries(data.priceReturns).map(([period, value]) => (
+                      <div key={period} className="text-center p-3 rounded-xl bg-white/5 shadow-inner">
+                        <p className="text-xs text-gray-500 uppercase mb-1">{period}</p>
+                        <p className={cn(
+                          "font-bold text-lg",
+                          value.includes("-") ? "text-red-400" : "text-green-400"
+                        )}>{value}</p>
+                      </div>
+                    ))}
+                  </div>
+                </GlassCard>
+              </div>
+            )}
+
+            {/* 52-Week Range */}
+            {data.fiftyTwoWeekRange && (
+              <div className="md:col-span-6">
+                <GlassCard className="h-full p-8" delay={0.6}>
+                  <h3 className="text-xl font-bold mb-6 flex items-center gap-2 text-white">
+                    <TrendingUp className="w-5 h-5 text-accent" /> 52-Week Range
+                  </h3>
+                  <div className="mt-8 relative pt-2">
+                    <div className="flex justify-between text-sm text-gray-400 mb-2 font-mono">
+                      <span>Low: {data.fiftyTwoWeekRange.low}</span>
+                      <span>High: {data.fiftyTwoWeekRange.high}</span>
+                    </div>
+                    <div className="h-4 bg-white/10 rounded-full overflow-hidden relative shadow-inner">
+                      <div
+                        className="absolute top-0 bottom-0 w-2 bg-accent rounded-full shadow-[0_0_15px_rgba(34,197,94,1)] box-content border-2 border-white/20"
+                        style={{ left: `${calculateRangePosition(data.fiftyTwoWeekRange.low, data.fiftyTwoWeekRange.high, data.currentPrice)}%` }}
+                      />
+                    </div>
+                    <div
+                      className="absolute top-0 transform -translate-x-1/2 mt-0"
+                      style={{ left: `${calculateRangePosition(data.fiftyTwoWeekRange.low, data.fiftyTwoWeekRange.high, data.currentPrice)}%` }}
+                    >
+                      <div className="text-accent text-xs font-bold text-center mt-2 drop-shadow-md">Current</div>
+                    </div>
+                  </div>
+                </GlassCard>
+              </div>
+            )}
+
           </div>
         )}
       </div>
-
-      {/* Results Grid */}
-      {data && (
-        <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-12 gap-6 animate-in fade-in slide-in-from-bottom-8 duration-700">
-
-          {/* Buffett's Opinion - Spans full width on mobile, 8 cols on desktop */}
-          <div className="md:col-span-8 bg-card rounded-3xl p-8 border border-white/5 shadow-xl relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-              <TrendingUp className="w-32 h-32 text-accent" />
-            </div>
-            <h2 className="text-2xl font-bold mb-6 flex items-center gap-3 text-accent">
-              <span className="bg-accent/10 p-2 rounded-lg">Oracle&apos;s Insight</span>
-            </h2>
-            <p className="text-xl md:text-2xl leading-relaxed text-gray-200 font-serif italic">
-              &quot;{data.opinion}&quot;
-            </p>
-          </div>
-
-          {/* Price Card - 4 cols */}
-          <div className="md:col-span-4 bg-card rounded-3xl p-8 border border-white/5 shadow-xl flex flex-col justify-between group hover:border-accent/20 transition-colors">
-            <div>
-              <h3 className="text-gray-400 font-medium mb-2">Current Price</h3>
-              <div className="text-4xl font-bold text-white tracking-tight">{data.currentPrice}</div>
-            </div>
-            <div className="mt-8">
-              <div className={cn(
-                "inline-flex items-center px-4 py-2 rounded-full text-sm font-medium",
-                data.marketStatus.toLowerCase().includes("closed")
-                  ? "bg-red-500/10 text-red-400 border border-red-500/20"
-                  : "bg-green-500/10 text-green-400 border border-green-500/20"
-              )}>
-                {data.marketStatus}
-              </div>
-            </div>
-          </div>
-
-          {/* Financials - 6 cols */}
-          <div className="md:col-span-6 bg-card rounded-3xl p-8 border border-white/5 shadow-xl">
-            <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-accent" /> Key Financials
-            </h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <p className="text-gray-500 text-sm uppercase tracking-wider">P/E Ratio</p>
-                <p className="text-2xl font-semibold">{data.keyFinancials.peRatio}</p>
-              </div>
-              <div className="space-y-2">
-                <p className="text-gray-500 text-sm uppercase tracking-wider">Market Cap</p>
-                <p className="text-2xl font-semibold">{data.keyFinancials.marketCap}</p>
-              </div>
-              <div className="space-y-2">
-                <p className="text-gray-500 text-sm uppercase tracking-wider">Dividend Yield</p>
-                <p className="text-2xl font-semibold">{data.keyFinancials.dividendYield}</p>
-              </div>
-              <div className="space-y-2">
-                <p className="text-gray-500 text-sm uppercase tracking-wider">ROE</p>
-                <p className="text-2xl font-semibold">{data.keyFinancials.roe}</p>
-              </div>
-              <div className="space-y-2">
-                <p className="text-gray-500 text-sm uppercase tracking-wider">Free Cash Flow</p>
-                <p className="text-2xl font-semibold">{data.keyFinancials.freeCashFlow}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* News - 6 cols */}
-          <div className="md:col-span-6 bg-card rounded-3xl p-8 border border-white/5 shadow-xl">
-            <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-              <Newspaper className="w-5 h-5 text-accent" /> Latest News
-            </h3>
-            <div className="space-y-4">
-              {data.recentNews.map((item, idx) => (
-                <a
-                  key={idx}
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group"
-                >
-                  <h4 className="font-medium text-gray-200 group-hover:text-accent transition-colors line-clamp-2">
-                    {item.title}
-                  </h4>
-                </a>
-              ))}
-            </div>
-          </div>
-
-        </div>
-      )}
     </main>
   );
 }

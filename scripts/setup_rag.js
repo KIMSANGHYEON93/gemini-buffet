@@ -114,6 +114,14 @@ async function run() {
         console.log(`STORE ID: ${storeWithFile.name}`);
         console.log("============================================");
 
+        // Update .env.local with the new STORE_ID
+        const envContent = fs.existsSync(envPath) ? fs.readFileSync(envPath, "utf8") : "";
+        const envLines = envContent.split("\n");
+        const newEnvLines = envLines.filter(line => !line.startsWith("GOOGLE_RAG_STORE_ID="));
+        newEnvLines.push(`GOOGLE_RAG_STORE_ID=${storeWithFile.name}`);
+        fs.writeFileSync(envPath, newEnvLines.join("\n").trim() + "\n");
+        console.log(`Updated .env.local with GOOGLE_RAG_STORE_ID=${storeWithFile.name}`);
+
     } catch (error) {
         console.error("Error:", error);
     }
