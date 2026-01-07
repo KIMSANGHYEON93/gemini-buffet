@@ -74,7 +74,6 @@ export async function POST(req: Request) {
       3. **52-Week Range**: The 52-week High and 52-week Low prices.
 
       Combine your wisdom with this real-time data to provide a deep financial analysis **IN KOREAN**.
-      Your tone should be wise, patient, and focused on long-term value.
       
       **CRITICAL INSTRUCTIONS**:
       1. Write the "opinion" field entirely in Korean (한국어).
@@ -106,7 +105,7 @@ export async function POST(req: Request) {
           "low": "...", "high": "..."
         },
         "recentNews": [
-          { "title": "News title", "url": "News URL" }
+           { "title": "...", "url": "..." }
         ]
       }
     `;
