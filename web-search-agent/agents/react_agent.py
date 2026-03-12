@@ -2,7 +2,7 @@ import os
 from langgraph.prebuilt import create_react_agent as _create_react_agent
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_anthropic import ChatAnthropic
-from tools import web_search_tool, file_save_tool, calculator_tool
+from tools import tools as AGENT_TOOLS
 
 SYSTEM_PROMPT = (
     "You are Warren Buffett's AI research assistant with access to real-time web search, "
@@ -18,7 +18,7 @@ SYSTEM_PROMPT = (
     "Respond in the same language the user writes in."
 )
 
-TOOLS = [web_search_tool, file_save_tool, calculator_tool]
+TOOLS = AGENT_TOOLS
 
 
 def _get_llm(provider: str):
