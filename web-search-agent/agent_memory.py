@@ -4,9 +4,11 @@ messages 리스트로 대화 히스토리를 관리하여 이전 맥락을 유�
 """
 
 import os
+import time
 from dotenv import load_dotenv
 from langchain_anthropic import ChatAnthropic
 from langchain.agents import create_agent
+from anthropic import RateLimitError, APITimeoutError, APIError
 from tools import tools
 
 load_dotenv()
@@ -49,6 +51,57 @@ agent = create_agent(
 messages = []
 
 
+def run_agent_safely(agent, user_input: str, max_retries: int = 3) -> str:
+    """Run the agent with error handling for rate limits, timeouts, and other errors.
+
+    Args:
+        agent: The LangGraph agent to invoke.
+        user_input: The user's message.
+        max_retries: Maximum number of retries for rate limit errors.
+
+    Returns:
+        The agent's response, or an error message string prefixed with [Error].
+    """
+    from langchain_core.messages import HumanMessage
+
+    messages.append(HumanMessage(content=user_input))
+
+    for attempt in range(max_retries):
+        try:
+            result = agent.invoke({"messages": messages})
+
+            messages.clear()
+            messages.extend(result["messages"])
+
+            ai_messages = [m for m in messages if m.type == "ai" and m.content]
+            return ai_messages[-1].content if ai_messages else "(no response)"
+
+        except RateLimitError as e:
+            wait = 2 ** (attempt + 1)  # 2, 4, 8 seconds
+            if attempt < max_retries - 1:
+                print(f"  [Rate limit] Retrying in {wait}s... ({attempt + 1}/{max_retries})")
+                time.sleep(wait)
+            else:
+                # Remove the unanswered user message
+                messages.pop()
+                return f"[Error] Rate limit exceeded after {max_retries} retries: {e}"
+
+        except APITimeoutError:
+            messages.pop()
+            return "[Error] Request timed out. Please try again."
+
+        except APIError as e:
+            messages.pop()
+            return f"[Error] API error: {e.message}"
+
+        except Exception as e:
+            messages.pop()
+            return f"[Error] {type(e).__name__}: {e}"
+
+    messages.pop()
+    return "[Error] Max retries reached."
+
+
 def chat(user_input: str) -> str:
     """Send a message to the agent, maintaining conversation history.
 
@@ -84,11 +137,11 @@ if __name__ == "__main__":
     print(f"  Tools: {[t.name for t in tools]}")
     print("=" * 50)
 
-    # Turn 1: Search
+    # Turn 1: Search (using run_agent_safely)
     q1 = "파이썬이란 무엇인지 검색해줘"
     print(f"\n[Turn 1] User: '{q1}'")
     print("-" * 50)
-    a1 = chat(q1)
+    a1 = run_agent_safely(agent, q1)
     print(f"Agent: {a1}")
     print(f"\n  (messages in history: {len(messages)})")
 
@@ -96,6 +149,6 @@ if __name__ == "__main__":
     q2 = "방금 검색한 내용을 python_info.txt에 저장해줘"
     print(f"\n[Turn 2] User: '{q2}'")
     print("-" * 50)
-    a2 = chat(q2)
+    a2 = run_agent_safely(agent, q2)
     print(f"Agent: {a2}")
     print(f"\n  (messages in history: {len(messages)})")
