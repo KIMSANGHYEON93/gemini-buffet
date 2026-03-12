@@ -29,8 +29,7 @@ def _get_llm(provider: str):
         return ChatGoogleGenerativeAI(
             model="gemini-2.0-flash",
             google_api_key=os.environ.get("GOOGLE_API_KEY"),
-            temperature=0.3,
-            convert_system_message_to_human=True,
+            temperature=1.0,
         )
     elif provider in ("claude", "anthropic"):
         return ChatAnthropic(
