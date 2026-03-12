@@ -1,6 +1,6 @@
 """Buffett Web Search Agent - LangGraph ReAct Agent
 
-Claude Sonnet 4.6 + tools (web_search, save_to_file, calculator)
+Claude Sonnet 4 + tools (web_search, save_to_file, calculator)
 """
 
 import os
@@ -30,7 +30,7 @@ Instructions:
 # --- LLM ---
 
 llm = ChatAnthropic(
-    model="claude-sonnet-4-6-20250527",
+    model="claude-sonnet-4-20250514",
     anthropic_api_key=os.environ.get("ANTHROPIC_API_KEY"),
     temperature=0.3,
 )
@@ -56,7 +56,7 @@ def run_agent(query: str) -> str:
 if __name__ == "__main__":
     print("=" * 50)
     print("  Agent created successfully!")
-    print(f"  Model: claude-sonnet-4-6-20250527")
+    print(f"  Model: claude-sonnet-4-20250514")
     print(f"  Tools: {[t.name for t in tools]}")
     print("=" * 50)
 
