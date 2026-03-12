@@ -91,3 +91,9 @@ if __name__ == "__main__":
     print("-" * 50)
     results = web_search.invoke("서울 날씨")
     print(results)
+
+    # Test save_to_file
+    print("\n[Test] save_to_file: 'test.txt'")
+    print("-" * 50)
+    result = save_to_file.invoke({"filename": "test.txt", "content": "테스트 내용"})
+    print(result)
