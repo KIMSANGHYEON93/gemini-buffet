@@ -52,12 +52,9 @@ def stream_agent(query: str) -> str:
     Returns:
         The final answer text.
     """
-    print(f"\n{'='*50}")
-    print(f"  Query: {query}")
-    print(f"{'='*50}\n")
+    print(f"\n에이전트 실행 시작...\n")
 
     final_answer = ""
-    step = 0
 
     for chunk in agent.stream(
         {"messages": [{"role": "user", "content": query}]}
@@ -69,25 +66,24 @@ def stream_agent(query: str) -> str:
                 # AI message with tool calls
                 if msg.type == "ai" and hasattr(msg, "tool_calls") and msg.tool_calls:
                     for tc in msg.tool_calls:
-                        step += 1
+                        print(f"도구 사용: {tc['name']}")
                         args_str = str(tc.get("args", {}))
                         if len(args_str) > 100:
                             args_str = args_str[:100] + "..."
-                        print(f"  [{step}] Tool Call: {tc['name']}")
-                        print(f"      Args: {args_str}")
+                        print(f"입력값: {args_str}")
 
                 # Tool result (observation)
                 elif msg.type == "tool":
                     content = str(msg.content)
                     preview = content[:100] + "..." if len(content) > 100 else content
-                    print(f"      Observation: {preview}")
+                    print(f"관찰 결과: {preview}")
+                    print()
 
                 # AI final answer (no tool calls, has content)
                 elif msg.type == "ai" and msg.content:
                     final_answer = msg.content
-                    print(f"\n  [Final Answer]")
-                    print(f"  {'-'*46}")
-                    print(f"  {final_answer}")
+                    print(f"최종 답변:")
+                    print(final_answer)
 
     return final_answer
 
@@ -97,5 +93,5 @@ if __name__ == "__main__":
     print(f"Model: claude-sonnet-4-20250514")
     print(f"Tools: {[t.name for t in tools]}")
 
-    query = "NVIDIA의 현재 주가를 검색하고, 주가에서 10% 할인된 가격을 계산해줘"
+    query = "최근 AI 뉴스 3가지를 검색해서 요약해줘"
     stream_agent(query)
