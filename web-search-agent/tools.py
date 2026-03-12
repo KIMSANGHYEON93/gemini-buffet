@@ -97,3 +97,14 @@ if __name__ == "__main__":
     print("-" * 50)
     result = save_to_file.invoke({"filename": "test.txt", "content": "테스트 내용"})
     print(result)
+
+    # Test calculator
+    print("\n[Test] calculator: '2 + 3 * 4'")
+    print("-" * 50)
+    result = calculator.invoke({"expression": "2 + 3 * 4"})
+    print(result)
+
+    print("\n[Test] calculator: '100 / 7'")
+    print("-" * 50)
+    result = calculator.invoke({"expression": "100 / 7"})
+    print(result)
