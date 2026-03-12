@@ -11,7 +11,8 @@ from fastmcp import FastMCP
 
 load_dotenv()
 
-GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
+_raw_token = os.environ.get("GITHUB_TOKEN", "")
+GITHUB_TOKEN = _raw_token if _raw_token.startswith("ghp_") or _raw_token.startswith("github_pat_") else ""
 GITHUB_API = "https://api.github.com"
 
 mcp = FastMCP("GitHub MCP Server")
