@@ -38,3 +38,6 @@ next-env.d.ts
 
 # local test scripts
 test-gemini.js
+
+# agent output
+web-search-agent/output/
