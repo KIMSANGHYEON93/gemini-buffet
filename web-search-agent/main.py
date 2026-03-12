@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Buffett Web Search Agent - LangChain ReAct Agent with Tavily, Calculator, and File tools."""
+"""Buffett Web Search Agent - LangGraph ReAct Agent with Tavily, Calculator, and File tools."""
 
 import sys
 import os
@@ -42,8 +42,17 @@ def main():
             break
 
         try:
-            result = agent.invoke({"input": question})
-            print(f"\nAgent: {result['output']}")
+            result = agent.invoke(
+                {"messages": [{"role": "user", "content": question}]}
+            )
+            # Extract the last AI message from the graph result
+            ai_messages = [
+                m for m in result["messages"] if m.type == "ai" and m.content
+            ]
+            if ai_messages:
+                print(f"\nAgent: {ai_messages[-1].content}")
+            else:
+                print("\nAgent: (no response)")
         except Exception as e:
             print(f"\nError: {e}")
 
