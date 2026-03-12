@@ -1,7 +1,7 @@
 [project]
 name = "github-mcp-server"
 version = "0.1.0"
-description = "Add your description here"
+description = "GitHub API MCP Server built with FastMCP"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
