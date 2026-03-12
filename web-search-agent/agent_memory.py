@@ -132,23 +132,30 @@ def chat(user_input: str) -> str:
 
 if __name__ == "__main__":
     print("=" * 50)
-    print("  Multi-turn Agent (with memory)")
+    print("  Interactive Agent (with memory)")
     print(f"  Model: claude-sonnet-4-20250514")
     print(f"  Tools: {[t.name for t in tools]}")
+    print("  Type 'quit' to exit.")
     print("=" * 50)
 
-    # Turn 1: Search (using run_agent_safely)
-    q1 = "파이썬이란 무엇인지 검색해줘"
-    print(f"\n[Turn 1] User: '{q1}'")
-    print("-" * 50)
-    a1 = run_agent_safely(agent, q1)
-    print(f"Agent: {a1}")
-    print(f"\n  (messages in history: {len(messages)})")
+    turn = 0
+    while True:
+        try:
+            user_input = input("\nYou: ").strip()
+        except (EOFError, KeyboardInterrupt):
+            print("\n\nBye!")
+            break
 
-    # Turn 2: Save (relies on context from Turn 1)
-    q2 = "방금 검색한 내용을 python_info.txt에 저장해줘"
-    print(f"\n[Turn 2] User: '{q2}'")
-    print("-" * 50)
-    a2 = run_agent_safely(agent, q2)
-    print(f"Agent: {a2}")
-    print(f"\n  (messages in history: {len(messages)})")
+        if not user_input:
+            continue
+        if user_input.lower() == "quit":
+            print("\nBye!")
+            break
+
+        turn += 1
+        print(f"\n[Turn {turn}] (history: {len(messages)} msgs)")
+        print("-" * 50)
+
+        answer = run_agent_safely(agent, user_input)
+        print(f"\nAgent: {answer}")
+        print(f"  (history: {len(messages)} msgs)")
