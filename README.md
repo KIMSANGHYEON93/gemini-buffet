@@ -20,6 +20,78 @@
 - **버핏의 투자 원칙 적용**: 경제적 해자(Economic Moat), 경영진 정직성, 현금 흐름 중심 분석
 - **한국어 분석 제공**: 모든 분석 결과가 한국어로 제공됩니다
 
+## 🚀 v3 주요 업데이트
+
+### MCP 서버 통합
+- **GitHub API MCP 서버**: FastMCP 기반으로 저장소 정보, PR 목록, 릴리즈 조회 도구 제공
+- **FastMCP Best Practices 적용**: timeout(15s), tags 분류, annotations(readOnlyHint 등) 설정
+- **모듈 분리 구조**: `main.py` / `tools.py` / `github_client.py`로 책임 분리
+
+### 웹 검색 에이전트
+- **LangGraph ReAct 에이전트**: Claude API + Tavily 웹 검색 기반 멀티턴 대화 에이전트
+- **스트리밍 응답**: 에이전트 실행 과정을 단계별로 실시간 출력
+- **대화 메모리**: 멀티턴 컨텍스트 유지 및 대화 이력 관리
+
+### Context7 MCP 연동
+- **실시간 라이브러리 문서 조회**: Context7 MCP 서버를 통해 최신 라이브러리 문서 및 코드 예제 검색
+
+## 프로젝트 구조
+
+```
+gemini-buffet/
+├── app/                          # Next.js 14 메인 앱
+│   ├── api/analyze/              # 주식 분석 API (Gemini + RAG + Search)
+│   ├── api/web-search-agent/     # 웹 검색 에이전트 API
+│   ├── agent/                    # 에이전트 채팅 UI
+│   └── components/               # UI 컴포넌트 (3D Scene, GlassCard)
+├── web-search-agent/             # LangGraph ReAct 에이전트 (Python)
+│   ├── agents/                   # 에이전트 팩토리
+│   ├── tools.py                  # 도구 정의 (web_search, calculator, file_save)
+│   ├── agent_memory.py           # 대화 메모리 관리
+│   └── agent_stream.py           # 스트리밍 응답 처리
+├── github-mcp-server/            # GitHub API MCP 서버 (FastMCP)
+│   ├── main.py                   # 서버 엔트리포인트
+│   ├── tools.py                  # MCP 도구 (repo, PR, release 조회)
+│   └── github_client.py          # GitHub REST API 클라이언트
+├── scripts/                      # RAG 스토어 설정 스크립트
+└── .mcp.json                     # MCP 서버 설정
+```
+
+## 🗺️ DDD 확장 로드맵
+
+현재 `app/api/analyze/route.ts`에 RAG 호출, 검색, 프롬프트 조합, 응답 포맷팅이 모두 포함된 모놀리식 구조입니다. 향후 DDD(Domain-Driven Design) 패턴으로 리팩토링하여 테스트 가능성과 확장성을 높일 계획입니다.
+
+### 바운디드 컨텍스트 (Bounded Contexts)
+
+| 컨텍스트 | 현재 상태 | 목표 |
+|----------|----------|------|
+| **Stock Analysis** | `route.ts`에 인라인 | 주식 분석 도메인 서비스로 분리 |
+| **Buffett Wisdom** | RAG 호출이 route에 혼재 | RAG 전용 리포지토리 + 도메인 모델 |
+| **Market Data** | Google Search 직접 호출 | 실시간 데이터 어댑터로 추상화 |
+| **Chat Agent** | 단일 route 핸들러 | 에이전트 오케스트레이션 서비스 |
+
+### 목표 구조
+
+```
+src/
+├── domain/
+│   ├── stock/                # 주식 분석 도메인
+│   │   ├── entities/         # StockSymbol, AnalysisResult
+│   │   ├── services/         # BuffettAnalysisService
+│   │   └── repositories/     # RAG 조회 인터페이스
+│   └── buffett/              # 버핏 페르소나 도메인
+│       └── valueObjects/     # InvestmentPrinciple, Quote
+├── application/
+│   └── useCases/             # AnalyzeStockUseCase
+├── infrastructure/
+│   ├── gemini/               # Gemini API 클라이언트
+│   ├── rag/                  # Google File Search 어댑터
+│   └── search/               # Google Search Grounding 어댑터
+└── presentation/
+    ├── api/                  # Next.js route handlers
+    └── components/           # React UI 컴포넌트
+```
+
 ## 활용 방법 (Getting Started)
 
 아래 가이드를 따라 직접 프로젝트를 실행해보세요.
