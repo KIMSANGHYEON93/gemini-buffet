@@ -12,6 +12,7 @@ import github_client
     tags={"github", "repository"},
     timeout=15.0,
     annotations={
+        "title": "Repository Info",
         "readOnlyHint": True,
         "destructiveHint": False,
         "idempotentHint": True,
@@ -47,6 +48,7 @@ async def get_repo_info(owner: str, repo: str) -> str:
     tags={"github", "pull-request"},
     timeout=15.0,
     annotations={
+        "title": "Open Pull Requests",
         "readOnlyHint": True,
         "destructiveHint": False,
         "idempotentHint": True,
@@ -83,6 +85,7 @@ async def list_open_prs(owner: str, repo: str, limit: int = 5) -> str:
     tags={"github", "release"},
     timeout=15.0,
     annotations={
+        "title": "Latest Release",
         "readOnlyHint": True,
         "destructiveHint": False,
         "idempotentHint": True,

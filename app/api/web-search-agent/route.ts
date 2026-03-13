@@ -1,8 +1,5 @@
-import { GoogleGenAI } from "@google/genai";
 import { NextResponse } from "next/server";
-
-const apiKey = process.env.GOOGLE_API_KEY;
-const client = new GoogleGenAI({ apiKey });
+import { geminiClient, GEMINI_MODEL } from "@/src/infrastructure/gemini/client";
 
 export const maxDuration = 60;
 
@@ -37,18 +34,12 @@ export async function POST(req: Request) {
       history?: Message[];
     };
 
-    if (!apiKey) {
-      throw new Error("GOOGLE_API_KEY is not defined");
-    }
-
     if (!message?.trim()) {
       return NextResponse.json(
         { error: "Message is required" },
         { status: 400 }
       );
     }
-
-    const model = "gemini-2.0-flash";
 
     // Build conversation contents from history
     const contents: Array<{ role: string; parts: Array<{ text: string }> }> = [];
@@ -66,8 +57,8 @@ export async function POST(req: Request) {
     let ragContext = "";
     if (STORE_ID) {
       try {
-        const ragResult = await client.models.generateContent({
-          model,
+        const ragResult = await geminiClient.models.generateContent({
+          model: GEMINI_MODEL,
           contents: [
             {
               role: "user",
@@ -105,8 +96,8 @@ export async function POST(req: Request) {
     });
 
     // Generate response with Google Search grounding
-    const result = await client.models.generateContent({
-      model,
+    const result = await geminiClient.models.generateContent({
+      model: GEMINI_MODEL,
       contents,
       config: {
         tools: [{ googleSearch: {} }],
@@ -121,8 +112,7 @@ export async function POST(req: Request) {
     const searchQueries = groundingMetadata?.webSearchQueries || [];
     const groundingChunks = groundingMetadata?.groundingChunks || [];
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const sources = (groundingChunks as any[])
+    const sources = groundingChunks
       .filter((chunk) => chunk.web)
       .map((chunk) => ({
         title: chunk.web?.title || "Source",
