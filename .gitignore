@@ -26,6 +26,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
+.env
 .env*.local
 
 # vercel
@@ -37,3 +38,12 @@ next-env.d.ts
 
 # local test scripts
 test-gemini.js
+
+# python
+__pycache__/
+
+# agent output
+web-search-agent/output/
+
+# uv
+.venv/

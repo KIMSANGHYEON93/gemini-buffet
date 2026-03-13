@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import dynamic from 'next/dynamic';
-import { Search, TrendingUp, DollarSign, Newspaper, AlertCircle, ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { Search, TrendingUp, DollarSign, Newspaper, AlertCircle, ArrowRight, Globe } from "lucide-react";
 import { GlassCard } from "@/app/components/ui/GlassCard";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -113,6 +114,24 @@ export default function Home() {
               &quot;Price is what you pay. Value is what you get.&quot;
             </p>
           </div>
+        </div>
+
+        {/* Agent Link */}
+        <div className="w-full max-w-xl mb-6 z-20">
+          <Link href="/agent">
+            <GlassCard className="rounded-2xl p-4 bg-white/5 border-white/10 hover:border-accent/30 cursor-pointer" delay={0.1}>
+              <div className="flex items-center gap-3">
+                <div className="bg-accent/10 p-2 rounded-xl">
+                  <Globe className="w-5 h-5 text-accent" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-white font-semibold text-sm">Buffett Search Agent</h3>
+                  <p className="text-gray-400 text-xs">Chat with AI powered by Google Search + Buffett&apos;s Letters</p>
+                </div>
+                <ArrowRight className="w-4 h-4 text-gray-500" />
+              </div>
+            </GlassCard>
+          </Link>
         </div>
 
         {/* Search Section */}
