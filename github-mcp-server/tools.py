@@ -4,6 +4,7 @@
 github_client 모듈의 fetch 함수를 호출하고 결과를 포맷팅하여 반환.
 """
 
+from mcp.types import ToolAnnotations
 from main import mcp
 import github_client
 
@@ -11,13 +12,11 @@ import github_client
 @mcp.tool(
     tags={"github", "repository"},
     timeout=15.0,
-    annotations={
-        "title": "Repository Info",
-        "readOnlyHint": True,
-        "destructiveHint": False,
-        "idempotentHint": True,
-        "openWorldHint": True,
-    },
+    annotations=ToolAnnotations(
+        readOnlyHint=True,
+        idempotentHint=True,
+        openWorldHint=True,
+    ),
 )
 async def get_repo_info(owner: str, repo: str) -> str:
     """Get basic information about a GitHub repository.
@@ -47,13 +46,11 @@ async def get_repo_info(owner: str, repo: str) -> str:
 @mcp.tool(
     tags={"github", "pull-request"},
     timeout=15.0,
-    annotations={
-        "title": "Open Pull Requests",
-        "readOnlyHint": True,
-        "destructiveHint": False,
-        "idempotentHint": True,
-        "openWorldHint": True,
-    },
+    annotations=ToolAnnotations(
+        readOnlyHint=True,
+        idempotentHint=True,
+        openWorldHint=True,
+    ),
 )
 async def list_open_prs(owner: str, repo: str, limit: int = 5) -> str:
     """List open pull requests for a GitHub repository.
@@ -84,13 +81,11 @@ async def list_open_prs(owner: str, repo: str, limit: int = 5) -> str:
 @mcp.tool(
     tags={"github", "release"},
     timeout=15.0,
-    annotations={
-        "title": "Latest Release",
-        "readOnlyHint": True,
-        "destructiveHint": False,
-        "idempotentHint": True,
-        "openWorldHint": True,
-    },
+    annotations=ToolAnnotations(
+        readOnlyHint=True,
+        idempotentHint=True,
+        openWorldHint=True,
+    ),
 )
 async def get_latest_release(owner: str, repo: str) -> str:
     """Get the latest release of a GitHub repository.
