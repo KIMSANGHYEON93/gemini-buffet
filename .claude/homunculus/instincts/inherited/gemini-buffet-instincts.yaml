@@ -1,0 +1,641 @@
+# Instincts generated from https://github.com/KIMSANGHYEON93/gemini-buffet
+# Generated: 2026-04-02T04:33:25.978Z
+# Version: 2.0
+# NOTE: This file supplements (does not replace) any existing curated instincts.
+# High-confidence manually curated instincts should be preserved alongside these.
+
+---
+id: gemini-buffet-commit-conventional
+trigger: "when writing a commit message"
+confidence: 0.85
+domain: git
+source: repo-analysis
+source_repo: https://github.com/KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Commit Conventional
+
+## Action
+
+Use conventional commit format with prefixes: feat, chore, refactor, fix, docs
+
+## Evidence
+
+- 40 commits analyzed
+- Detected conventional commit pattern
+- Examples: fix(ci): Use --legacy-peer-deps to resolve @react-three peer conflict, chore: Add SessionStart hook for auto dependency install on web
+
+---
+id: gemini-buffet-commit-length
+trigger: "when writing a commit message"
+confidence: 0.6
+domain: git
+source: repo-analysis
+source_repo: https://github.com/KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Commit Length
+
+## Action
+
+Write moderate-length commit messages (~59 characters)
+
+## Evidence
+
+- Average commit message length: 59 chars
+- Based on 40 commits
+
+---
+id: gemini-buffet-naming-files
+trigger: "when creating a new file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Naming Files
+
+## Action
+
+Use camelCase naming convention
+
+## Evidence
+
+- Analyzed file naming patterns in repository
+- Dominant pattern: camelCase
+
+---
+id: gemini-buffet-export-style
+trigger: "when exporting from a module"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Export Style
+
+## Action
+
+Prefer mixed exports
+
+## Evidence
+
+- Export pattern analysis
+- Dominant style: mixed
+
+---
+id: gemini-buffet-test-separate
+trigger: "when writing tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Test Separate
+
+## Action
+
+Place tests in the tests/ or __tests__/ directory, mirroring src structure
+
+## Evidence
+
+- Separate test directory pattern detected
+- Tests live in dedicated test folders
+
+---
+id: gemini-buffet-workflow-feature-development
+trigger: "when implementing a new feature"
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Workflow Feature Development
+
+## Action
+
+Follow the feature-development workflow:
+1. Add feature implementation
+2. Add tests for feature
+3. Update documentation
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~17x per month
+- Files: app/api/analyze/*, app/components/3d/*, app/components/ui/*
+
+---
+id: gemini-buffet-workflow-refactoring
+trigger: "when refactoring code"
+confidence: 0.75
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Workflow Refactoring
+
+## Action
+
+Follow the refactoring workflow:
+1. Ensure tests pass before refactor
+2. Refactor code structure
+3. Verify tests still pass
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~5x per month
+- Files: src/**/*
+
+---
+id: gemini-buffet-workflow-add-or-enhance-api-endpoint
+trigger: "when doing add or enhance api endpoint"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Workflow Add Or Enhance Api Endpoint
+
+## Action
+
+Follow the add-or-enhance-api-endpoint workflow:
+1. Create or update app/api/[endpoint]/route.ts with new logic.
+2. Update or create related UI files (e.g., app/page.tsx, app/components/*) if the endpoint is user-facing.
+3. Update package.json and package-lock.json if new dependencies are needed.
+4. Update README.md if public API or usage changes.
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: app/api/*/route.ts, app/page.tsx, app/components/*
+
+---
+id: gemini-buffet-workflow-refactor-to-modular-or-ddd-structure
+trigger: "when doing refactor to modular or ddd structure"
+confidence: 0.55
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Workflow Refactor To Modular Or Ddd Structure
+
+## Action
+
+Follow the refactor-to-modular-or-ddd-structure workflow:
+1. Split large files (e.g., route.ts, main.py) into multiple modules by responsibility.
+2. Create new directories and files for domain, application, infrastructure, and presentation layers.
+3. Move or rewrite logic into new files, updating imports and interfaces.
+4. Remove deprecated or redundant code.
+5. Update related configuration or documentation if necessary.
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~1x per month
+- Files: app/api/*/route.ts, src/domain/*, src/application/*
+
+---
+id: gemini-buffet-workflow-add-or-update-agent-tools-and-tests
+trigger: "when doing add or update agent tools and tests"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Workflow Add Or Update Agent Tools And Tests
+
+## Action
+
+Follow the add-or-update-agent-tools-and-tests workflow:
+1. Add or update tool implementation in tools.py or tools/*.py.
+2. Write or update test code for the tool (often as direct invocation or test functions in the same file).
+3. Update requirements.txt if new dependencies are needed.
+4. Optionally update documentation or skills guides.
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: web-search-agent/tools.py, web-search-agent/tools/*.py, web-search-agent/requirements.txt
+
+---
+id: gemini-buffet-workflow-update-or-add-documentation-and-guides
+trigger: "when doing update or add documentation and guides"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Workflow Update Or Add Documentation And Guides
+
+## Action
+
+Follow the update-or-add-documentation-and-guides workflow:
+1. Edit or create README.md with new sections or updated instructions.
+2. Edit or add skills or pattern guides (e.g., .claude/skills/*.md).
+3. Document new workflows or usage patterns.
+4. Sometimes add or update example/test files.
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: README.md, github-mcp-server/README.md, .claude/skills/*.md
+
+---
+id: gemini-buffet-workflow-dependency-update-and-ci-fix
+trigger: "when doing dependency update and ci fix"
+confidence: 0.55
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Workflow Dependency Update And Ci Fix
+
+## Action
+
+Follow the dependency-update-and-ci-fix workflow:
+1. Update package.json and package-lock.json or requirements.txt with new dependency versions.
+2. Update .github/workflows/ci.yml to adjust install commands or environment.
+3. Test installation and CI pipeline.
+4. Commit lockfiles and CI config changes.
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~1x per month
+- Files: package.json, package-lock.json, web-search-agent/requirements.txt
+
+---
+id: gemini-buffet-instinct-file-naming-camelCase
+trigger: "When creating or renaming a file in the codebase."
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Instinct File Naming CamelCase
+
+## Action
+
+Name the file using camelCase (e.g., myFileName.ts).
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.files
+- Observed in src/app/components/ui/*
+
+---
+id: gemini-buffet-instinct-function-naming-camelCase
+trigger: "When defining a new function."
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Instinct Function Naming CamelCase
+
+## Action
+
+Name the function using camelCase (e.g., fetchData).
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.functions
+- Seen in src/app/api/analyze/route.ts
+
+---
+id: gemini-buffet-instinct-class-naming-PascalCase
+trigger: "When defining a new class."
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Instinct Class Naming PascalCase
+
+## Action
+
+Name the class using PascalCase (e.g., StockAnalyzer).
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.classes
+- Seen in web-search-agent/agents/react_agent.py
+
+---
+id: gemini-buffet-instinct-constant-naming-SCREAMING_SNAKE_CASE
+trigger: "When defining a constant value."
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Instinct Constant Naming SCREAMING_SNAKE_CASE
+
+## Action
+
+Name the constant using SCREAMING_SNAKE_CASE (e.g., DEFAULT_TIMEOUT).
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.constants
+- Seen in web-search-agent/tools.py
+
+---
+id: gemini-buffet-instinct-import-style-mixed
+trigger: "When importing modules or packages."
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Instinct Import Style Mixed
+
+## Action
+
+Use mixed import styles as appropriate for the language and context.
+
+## Evidence
+
+- Pattern in codeStyle.importStyle
+- Seen in web-search-agent/tools.py and app/api/analyze/route.ts
+
+---
+id: gemini-buffet-instinct-export-style-mixed
+trigger: "When exporting modules or functions."
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Instinct Export Style Mixed
+
+## Action
+
+Use mixed export styles as appropriate for the language and context.
+
+## Evidence
+
+- Pattern in codeStyle.exportStyle
+- Seen in app/api/analyze/route.ts
+
+---
+id: gemini-buffet-instinct-python-try-catch-error-handling
+trigger: "When handling errors in Python code."
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Instinct Python Try Catch Error Handling
+
+## Action
+
+Use try-except blocks for error handling.
+
+## Evidence
+
+- Pattern in errorHandling.style
+- Seen in web-search-agent/tools.py
+
+---
+id: gemini-buffet-instinct-test-location-separate
+trigger: "When adding new tests."
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Instinct Test Location Separate
+
+## Action
+
+Place test files in a separate location from source files (e.g., **/*.test.*, test_*.py).
+
+## Evidence
+
+- Pattern in architecture.folderStructure.testLocation
+- Seen in test_rag.js, test_search.js, test_vertex.js
+
+---
+id: gemini-buffet-instinct-test-after-feature
+trigger: "When implementing a new feature."
+confidence: 0.9
+domain: testing
+source: repo-analysis
+source_repo: KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Instinct Test After Feature
+
+## Action
+
+Add or update tests for the feature immediately after implementation.
+
+## Evidence
+
+- Feature-development workflow commitSequence
+- Seen in commits: 'Add feature implementation', 'Add tests for feature'
+
+---
+id: gemini-buffet-instinct-test-before-and-after-refactor
+trigger: "When refactoring code."
+confidence: 0.9
+domain: testing
+source: repo-analysis
+source_repo: KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Instinct Test Before And After Refactor
+
+## Action
+
+Ensure tests pass before refactoring and verify tests still pass after refactoring.
+
+## Evidence
+
+- Refactoring workflow commitSequence
+- Seen in commits: 'Ensure tests pass before refactor', 'Verify tests still pass'
+
+---
+id: gemini-buffet-instinct-test-agent-tools-directly
+trigger: "When adding or updating agent tools."
+confidence: 0.85
+domain: testing
+source: repo-analysis
+source_repo: KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Instinct Test Agent Tools Directly
+
+## Action
+
+Write or update test code for the tool, often as direct invocation or test functions in the same file.
+
+## Evidence
+
+- add-or-update-agent-tools-and-tests workflow
+- Seen in web-search-agent/tools.py
+
+---
+id: gemini-buffet-instinct-git-conventional-commits
+trigger: "When writing a commit message."
+confidence: 0.95
+domain: git
+source: repo-analysis
+source_repo: KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Instinct Git Conventional Commits
+
+## Action
+
+Use conventional commit prefixes (feat, fix, chore, refactor, docs, test) followed by a colon and a concise message.
+
+## Evidence
+
+- Pattern in commits.prefixes
+- Seen in commit: 'fix(ci): Use --legacy-peer-deps to resolve @react-three peer conflict'
+
+---
+id: gemini-buffet-instinct-git-commit-length-limit
+trigger: "When composing a commit message."
+confidence: 0.7
+domain: git
+source: repo-analysis
+source_repo: KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Instinct Git Commit Length Limit
+
+## Action
+
+Keep the commit message around 59 characters on average.
+
+## Evidence
+
+- Pattern in commits.averageLength
+- Seen in commit examples
+
+---
+id: gemini-buffet-instinct-add-or-enhance-api-endpoint
+trigger: "When someone wants to add a new feature accessible via API or improve an existing API route."
+confidence: 0.95
+domain: workflow
+source: repo-analysis
+source_repo: KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Instinct Add Or Enhance Api Endpoint
+
+## Action
+
+Create or update app/api/[endpoint]/route.ts with new logic; update related UI files if user-facing; update dependencies and README if needed.
+
+## Evidence
+
+- add-or-enhance-api-endpoint workflow
+- Seen in commits and files: app/api/*/route.ts, app/page.tsx, README.md
+
+---
+id: gemini-buffet-instinct-refactor-to-modular-or-ddd-structure
+trigger: "When someone wants to improve maintainability, testability, or scalability by restructuring code."
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Instinct Refactor To Modular Or Ddd Structure
+
+## Action
+
+Split large files into modules by responsibility; create domain/application/infrastructure layers; update imports and remove deprecated code.
+
+## Evidence
+
+- refactor-to-modular-or-ddd-structure workflow
+- Seen in commits and files: src/domain/*, src/application/*, src/infrastructure/*
+
+---
+id: gemini-buffet-instinct-add-or-update-agent-tools-and-tests
+trigger: "When someone wants to extend agent capabilities (e.g., new tool, new test case) in the web-search-agent or MCP server."
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Instinct Add Or Update Agent Tools And Tests
+
+## Action
+
+Add or update tool implementation in tools.py or tools/*.py; write or update test code; update requirements.txt and documentation as needed.
+
+## Evidence
+
+- add-or-update-agent-tools-and-tests workflow
+- Seen in web-search-agent/tools.py, web-search-agent/requirements.txt
+
+---
+id: gemini-buffet-instinct-update-or-add-documentation-and-guides
+trigger: "When someone adds a major feature, refactors architecture, or wants to improve onboarding."
+confidence: 0.85
+domain: workflow
+source: repo-analysis
+source_repo: KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Instinct Update Or Add Documentation And Guides
+
+## Action
+
+Edit or create README.md and skills guides; document new workflows or usage patterns; update example/test files as needed.
+
+## Evidence
+
+- update-or-add-documentation-and-guides workflow
+- Seen in README.md, .claude/skills/*.md
+
+---
+id: gemini-buffet-instinct-dependency-update-and-ci-fix
+trigger: "When someone wants to upgrade libraries or fix build/CI failures due to dependency conflicts."
+confidence: 0.85
+domain: workflow
+source: repo-analysis
+source_repo: KIMSANGHYEON93/gemini-buffet
+---
+
+# Gemini Buffet Instinct Dependency Update And Ci Fix
+
+## Action
+
+Update dependency files and CI config; test installation and pipeline; commit lockfiles and config changes.
+
+## Evidence
+
+- dependency-update-and-ci-fix workflow
+- Seen in package.json, .github/workflows/ci.yml
+
